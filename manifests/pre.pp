@@ -56,27 +56,27 @@ class firewallrules::pre {
 
   # Default IPv6 firewall rules
   unless $::ipaddress6 == undef {
-    firewall { '000 accept all icmp':
+    firewall { '000 accept all icmp6':
       proto    => 'icmp',
       action   => 'accept',
       provider => 'ip6tables',
     }->
 
-    firewall { '001 accept all to lo interface':
+    firewall { '001 accept all v6 to lo interface':
       proto    => 'all',
       iniface  => 'lo',
       action   => 'accept',
       provider => 'ip6tables',
     }->
 
-    firewall { '002 accept related established rules':
+    firewall { '002 accept v6 related established rules':
       proto    => 'all',
       state    => ['RELATED', 'ESTABLISHED'],
       action   => 'accept',
       provider => 'ip6tables',
     }
 
-    firewall { '003 accept outbound traffic':
+    firewall { '003 accept v6 outbound traffic':
       action   => 'accept',
       chain    => 'OUTPUT',
       proto    => 'all',
