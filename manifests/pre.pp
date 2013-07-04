@@ -28,7 +28,7 @@ class firewallrules::pre {
     require => undef,
   }
 
-  # Default firewall rules
+  # Default IPv4 firewall rules
   firewall { '000 accept all icmp':
     proto   => 'icmp',
     action  => 'accept',
@@ -51,5 +51,37 @@ class firewallrules::pre {
     chain  => 'OUTPUT',
     proto  => 'all',
     state  => [ 'ESTABLISHED', 'NEW', 'RELATED' ],
+  }
+
+
+  # Default IPv6 firewall rules
+  unless $::ipaddress6 == undef {
+    firewall { '000 accept all icmp':
+      proto    => 'icmp',
+      action   => 'accept',
+      provider => 'ip6tables',
+    }->
+
+    firewall { '001 accept all to lo interface':
+      proto    => 'all',
+      iniface  => 'lo',
+      action   => 'accept',
+      provider => 'ip6tables',
+    }->
+
+    firewall { '002 accept related established rules':
+      proto    => 'all',
+      state    => ['RELATED', 'ESTABLISHED'],
+      action   => 'accept',
+      provider => 'ip6tables',
+    }
+
+    firewall { '003 accept outbound traffic':
+      action   => 'accept',
+      chain    => 'OUTPUT',
+      proto    => 'all',
+      state    => [ 'ESTABLISHED', 'NEW', 'RELATED' ],
+      provider => 'ip6tables',
+    }
   }
 }
